@@ -12,12 +12,6 @@ public class MeetupManager extends Manager {
     public static MeetupManager _self;
 
     protected Connection con;
-    private static String driver = "com.mysql.jdbc.Driver";
-    private static String url = "jdbc:mysql://localhost:3306/";
-    private static String urlEnd = "?serverTimezone=UTC&characterEncoding=utf8&useSSL=false";
-    private static String usr = "root";
-    private static String pwd = "caozihan59";
-    private static String dbName = "Foodish";
     private static String tableName = "Meetup";
 
     private static String Q_getMeetupList = "select * from ";

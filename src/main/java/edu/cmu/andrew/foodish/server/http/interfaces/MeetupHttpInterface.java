@@ -8,6 +8,12 @@ import edu.cmu.andrew.foodish.server.http.responses.AppResponse;
 import edu.cmu.andrew.foodish.server.http.utils.PATCH;
 import edu.cmu.andrew.foodish.server.managers.MeetupManager;
 import edu.cmu.andrew.foodish.server.models.Meetup;
+import edu.cmu.andrew.foodish.server.managers.MeetupAttendeeManager;
+import edu.cmu.andrew.foodish.server.models.MeetupAttendee;
+import edu.cmu.andrew.foodish.server.managers.UserManager;
+import edu.cmu.andrew.foodish.server.models.User;
+import edu.cmu.andrew.foodish.server.managers.DishManager;
+import edu.cmu.andrew.foodish.server.models.Dish;
 import edu.cmu.andrew.foodish.server.utils.*;
 import org.bson.Document;
 import org.json.JSONObject;
@@ -23,10 +29,21 @@ import java.util.ArrayList;
 public class MeetupHttpInterface extends HttpInterface {
 
     private ObjectWriter ow;
-    private MongoCollection<Document> userCollection = null;
 
     public MeetupHttpInterface() {
         ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+    }
+
+    @GET
+    @Path("/test")
+    @Produces({MediaType.APPLICATION_JSON})
+    public AppResponse meetupTestPage(@Context HttpHeaders headers) {
+        try {
+            AppLogger.info("Got an API call");
+            return new AppResponse("Meetup Test Page");
+        } catch (Exception e) {
+            throw handleException("GET /Meetup Test Page", e);
+        }
     }
 
     // http://localhost:8080/api/meetup
