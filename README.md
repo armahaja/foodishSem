@@ -10,3 +10,7 @@ Basic project
 
 Delete no need mongo dependency and finish Meetup
 
+**foodish 1.1.3**
+
+Build all class and update MySQL script in folder resources
+
