@@ -45,4 +45,48 @@ public class MeetupAttendeeHttpInterface extends HttpInterface {
             throw handleException("GET /MeetupAttendee Test Page", e);
         }
     }
+
+    // http://localhost:8080/api/meetupAttendee
+    @GET
+    @Produces({MediaType.APPLICATION_JSON})
+    public AppResponse getMeetupAttendees(@Context HttpHeaders headers, @QueryParam("sortby") String sortby, @QueryParam("offset") Integer offset,
+                                  @QueryParam("count") Integer count) {
+        try {
+            AppLogger.info("Got an API call");
+            ArrayList<MeetupAttendee> meetupAttendees = null;
+
+            meetupAttendees = MeetupAttendeeManager.getInstance().getMeetupAttendeeList();
+
+            if (meetupAttendees != null)
+                return new AppResponse(meetupAttendees);
+            else
+                throw new HttpBadRequestException(0, "Problem with getting meetupAttendees");
+        } catch (Exception e) {
+            throw handleException("GET /meetupAttendees", e);
+        }
+    }
+
+    @GET
+    @Path("/{idBuddyUser}/{idMeetup}")
+    @Produces({MediaType.APPLICATION_JSON})
+    public AppResponse getMeetupAttendeeById(@Context HttpHeaders headers, @PathParam("idBuddyUser") int idBuddyUser,
+                                          @PathParam("idMeetup") int idMeetup) {
+        try {
+            AppLogger.info("Got an API call");
+
+            MeetupAttendee meetupAttendee = MeetupAttendeeManager.getInstance().getMeetupAttendeeById(idBuddyUser, idMeetup);
+
+            if (meetupAttendee != null)
+            {
+                ArrayList<MeetupAttendee> meetupAttendees = new ArrayList<MeetupAttendee>();
+                meetupAttendees.add(meetupAttendee);
+                return new AppResponse(meetupAttendees);
+            }
+            else
+                throw new HttpBadRequestException(0, "Problem with getting meetupAttendee by ID");
+        } catch (Exception e) {
+            throw handleException("GET /meetupAttendees", e);
+        }
+    }
+
 }

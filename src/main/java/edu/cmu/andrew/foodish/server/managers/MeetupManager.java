@@ -15,6 +15,7 @@ public class MeetupManager extends Manager {
     private static String tableName = "Meetup";
 
     private static String Q_getMeetupList = "select * from ";
+    private static String Q_getMeetupById = "select * from Foodish.Meetup where idMeetup = ?";
     private static String Q_getidChefUserFromMeetup = "select idChefUser from Foodish.Meetup where idMeetup = ?";
     private static String Q_getLocationFromMeetup = "select Location from Foodish.Meetup where idMeetup = ?";
     private static String Q_insertToMeetupLessParameters = "insert into Meetup(idDish, idChefUser, Location, Date, StartTime, MaxGuestsAllowed) values(?,?,?,?,?,?)";
@@ -73,43 +74,39 @@ public class MeetupManager extends Manager {
         }
     }
 
-    public int getidChefUserFromMeetup(int meetupId) throws Exception {
+    public Meetup getMeetupById(int meetupId) throws AppException {
         try{
-            PreparedStatement statement = con.prepareStatement(Q_getidChefUserFromMeetup);
-            statement.setString(1, String.valueOf(meetupId));
+            PreparedStatement statement = con.prepareStatement(Q_getMeetupById);
+            statement.setInt(1, meetupId);
             statement.execute();
             ResultSet result = statement.getResultSet();
-            String res = null;
+            Meetup meetup = null;
+            System.out.println("Step 2");
             while(result.next()){
-                res = result.getString("idChefUser");
+                meetup = new Meetup(Integer.parseInt(result.getString("idMeetup")),
+                        Integer.parseInt(result.getString("idDish")),
+                        Integer.parseInt(result.getString("idChefUser")),
+                        result.getString("Location"),
+                        result.getString("Date"),
+                        result.getString("StartTime"),
+                        Integer.parseInt(result.getString("MaxGuestsAllowed"))
+                );
+                if (result.getString("Feedback_FoodQuality") != null)
+                    meetup.setFeedback_FoodQuality(Integer.parseInt(result.getString("Feedback_FoodQuality")));
+                if (result.getString("Feedback_FoodQuantity") != null)
+                    meetup.setFeedback_FoodQuantity(Integer.parseInt(result.getString("Feedback_FoodQuantity")));
+                if (result.getString("Feedback_FoodTaste") != null)
+                    meetup.setFeedback_FoodTaste(Integer.parseInt(result.getString("Feedback_FoodTaste")));
+                if (result.getString("TotalFeedbackReceived") != null)
+                    meetup.setTotalFeedbackReceived(Integer.parseInt(result.getString("TotalFeedbackReceived")));
+                if (result.getString("MeetupRating") != null)
+                    meetup.setMeetupRating(Integer.parseInt(result.getString("MeetupRating")));
             }
-            if (res != null)
-                return Integer.parseInt(res);
-            else
-                return -1;
-        }
-        catch(Exception e){
-            throw e;
-        }
-    }
+            System.out.println("Step 3");
+            return meetup;
 
-    public String getLocationFromMeetup(int meetupId) throws Exception {
-        try{
-            PreparedStatement statement = con.prepareStatement(Q_getLocationFromMeetup);
-            statement.setString(1, String.valueOf(meetupId));
-            statement.execute();
-            ResultSet result = statement.getResultSet();
-            String res = null;
-            while(result.next()){
-                res = result.getString("Location");
-            }
-            if (res != null)
-                return res;
-            else
-                return "Warning: No such location.";
-        }
-        catch(Exception e){
-            throw e;
+        } catch(Exception e){
+            throw handleException("Get Meetup List", e);
         }
     }
 
@@ -217,6 +214,50 @@ public class MeetupManager extends Manager {
             System.out.println("Delete Meetup executes successfully.");
         }catch (Exception e){
             throw handleException("Delete User", e);
+        }
+    }
+
+
+
+    //Backup methods for future use
+
+    public int getidChefUserFromMeetup(int meetupId) throws Exception {
+        try{
+            PreparedStatement statement = con.prepareStatement(Q_getidChefUserFromMeetup);
+            statement.setInt(1, meetupId);
+            statement.execute();
+            ResultSet result = statement.getResultSet();
+            String res = null;
+            while(result.next()){
+                res = result.getString("idChefUser");
+            }
+            if (res != null)
+                return Integer.parseInt(res);
+            else
+                return -1;
+        }
+        catch(Exception e){
+            throw e;
+        }
+    }
+
+    public String getLocationFromMeetup(int meetupId) throws Exception {
+        try{
+            PreparedStatement statement = con.prepareStatement(Q_getLocationFromMeetup);
+            statement.setInt(1, meetupId);
+            statement.execute();
+            ResultSet result = statement.getResultSet();
+            String res = null;
+            while(result.next()){
+                res = result.getString("Location");
+            }
+            if (res != null)
+                return res;
+            else
+                return "Warning: No such location.";
+        }
+        catch(Exception e){
+            throw e;
         }
     }
 

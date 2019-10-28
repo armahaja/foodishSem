@@ -14,3 +14,6 @@ Delete no need mongo dependency and finish Meetup
 
 Build all class and update MySQL script in folder resources
 
+**foodish 1.1.4**
+
+Fill in MeetupAttendee's functions

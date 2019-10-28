@@ -72,6 +72,31 @@ public class MeetupHttpInterface extends HttpInterface {
         }
     }
 
+    // http://localhost:8080/api/meetup
+    @GET
+    @Path("/{meetupId}")
+    @Produces({MediaType.APPLICATION_JSON})
+    public AppResponse getMeetupById(@Context HttpHeaders headers, @PathParam("meetupId") int meetupId) {
+        try {
+            AppLogger.info("Got an API call");
+
+            System.out.println("Step 1");
+            Meetup meetup = MeetupManager.getInstance().getMeetupById(meetupId);
+
+            System.out.println("Step 4");
+            if (meetup != null)
+            {
+                ArrayList<Meetup> meetups = new ArrayList<Meetup>();
+                meetups.add(meetup);
+                return new AppResponse(meetups);
+            }
+            else
+                throw new HttpBadRequestException(0, "Problem with getting meetup by id");
+        } catch (Exception e) {
+            throw handleException("GET /meetup by id", e);
+        }
+    }
+
     @POST
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
