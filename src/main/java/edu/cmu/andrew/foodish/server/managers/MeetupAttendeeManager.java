@@ -12,14 +12,14 @@ public class MeetupAttendeeManager extends Manager {
     public static MeetupAttendeeManager _self;
 
     protected Connection con;
-    private static String tableName = "MeetupAttendee";
+    private static final String tableName = "MeetupAttendee";
 
-    private static String Q_getMeetuAttendeeList = "select * from ";
-    private static String Q_getMeetUpAttendeeById = "select * from MeetupAttendee where idBuddyUser = ? and idMeetup = ?";
-    private static String Q_insertMeetUpAttendeeLessParameters = "insert into MeetupAttendee(idBuddyUser, idMeetup) values(?, ?)";
-    private static String Q_insertMeetUpAttendee = "insert into MeetupAttendee(idBuddyUser, idMeetup, MissingBuddy, BuddyRating, SuggestionToBuddy) values(?, ?, ?, ?, ?)";
-    private static String Q_updateToMeetup = "update MeetupAttendee set MissingBuddy = ?, BuddyRating = ?, SuggestionToBuddy = ? where idBuddyUser = ? and idMeetup = ?";
-    private static String Q_deleteFromMeetupAttendee = "delete from MeetupAttendee where idBuddyUser = ? and idMeetup = ?";
+    private static final String Q_getMeetuAttendeeList = "select * from ";
+    private static final String Q_getMeetUpAttendeeById = "select * from MeetupAttendee where idBuddyUser = ? and idMeetup = ?";
+    private static final String Q_insertMeetUpAttendeeLessParameters = "insert into MeetupAttendee(idBuddyUser, idMeetup) values(?, ?)";
+    private static final String Q_insertMeetUpAttendee = "insert into MeetupAttendee(idBuddyUser, idMeetup, MissingBuddy, BuddyRating, SuggestionToBuddy) values(?, ?, ?, ?, ?)";
+    private static final String Q_updateToMeetupAttendee = "update MeetupAttendee set MissingBuddy = ?, BuddyRating = ?, SuggestionToBuddy = ? where idBuddyUser = ? and idMeetup = ?";
+    private static final String Q_deleteFromMeetupAttendee = "delete from MeetupAttendee where idBuddyUser = ? and idMeetup = ?";
 
     public MeetupAttendeeManager() throws ClassNotFoundException, SQLException {
         this.con = MySQLPool.getInstance().getConnection();
@@ -85,6 +85,74 @@ public class MeetupAttendeeManager extends Manager {
 
         } catch(Exception e){
             throw handleException("Get Meetup By Id", e);
+        }
+    }
+
+    public void insertToMeetupAttendee(MeetupAttendee newMeetupAttendee) throws Exception{
+        try{
+            if ((newMeetupAttendee.getMissingBuddy() ==  -1)||(newMeetupAttendee.getBuddyRating() ==  -1)||
+                    (newMeetupAttendee.getSuggestionToBuddy() ==  null)) {
+//                System.out.println(newMeetupAttendee.getMissingBuddy());
+//                System.out.println(newMeetupAttendee.getBuddyRating());
+//                System.out.println(newMeetupAttendee.getSuggestionToBuddy());
+                System.out.println("Step 4");
+                insertToMeetupAttendeeLessParameters(newMeetupAttendee);
+                return;
+            }
+            PreparedStatement statement = con.prepareStatement(Q_insertMeetUpAttendee);
+            statement.setInt(1, newMeetupAttendee.getIdBuddyUser());
+            statement.setInt(2, newMeetupAttendee.getIdMeetup());
+            statement.setInt(3, newMeetupAttendee.getMissingBuddy());
+            statement.setInt(4, newMeetupAttendee.getBuddyRating());
+            statement.setString(5, newMeetupAttendee.getSuggestionToBuddy());
+            statement.execute();
+            System.out.println("Insert MeetupAttendee executes successfully.");
+        }
+        catch(Exception e){
+            throw e;
+        }
+    }
+
+    public void insertToMeetupAttendeeLessParameters(MeetupAttendee newMeetupAttendee) throws Exception{
+        try{
+            PreparedStatement statement = con.prepareStatement(Q_insertMeetUpAttendeeLessParameters);
+            statement.setInt(1, newMeetupAttendee.getIdBuddyUser());
+            statement.setInt(2, newMeetupAttendee.getIdMeetup());
+            statement.execute();
+            System.out.println("Insert MeetupAttendee executes successfully.");
+        }
+        catch(Exception e){
+            throw e;
+        }
+    }
+
+    public void updateToMeetupAttendee(MeetupAttendee newMeetupAttendee) throws Exception{
+        try{
+            PreparedStatement statement = con.prepareStatement(Q_updateToMeetupAttendee);
+            statement.setInt(1, newMeetupAttendee.getMissingBuddy());
+            statement.setInt(2, newMeetupAttendee.getBuddyRating());
+            statement.setString(3, newMeetupAttendee.getSuggestionToBuddy());
+            statement.setInt(4, newMeetupAttendee.getIdBuddyUser());
+            statement.setInt(5, newMeetupAttendee.getIdMeetup());
+            statement.execute();
+            System.out.println("Update MeetupAttendee executes successfully.");
+        }
+        catch(Exception e){
+            throw e;
+        }
+    }
+
+    public void deleteMeetupAttendee(int idBuddyUser, int idMeetup) throws AppException {
+        try {
+            PreparedStatement statement = con.prepareStatement(Q_deleteFromMeetupAttendee);
+            statement.setInt(1, idBuddyUser);
+            statement.setInt(2, idMeetup);
+            if (statement.executeUpdate() == 1)
+                System.out.println("Delete MeetupAttendee executes successfully.");
+            else
+                throw new Exception("Delete MeetupAttendee false");
+        }catch (Exception e){
+            throw handleException("Delete MeetupAttendee", e);
         }
     }
 }

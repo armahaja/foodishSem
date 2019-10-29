@@ -35,14 +35,14 @@ public class MeetupAttendeeHttpInterface extends HttpInterface {
     }
 
     @GET
-    @Path("/test")
+    @Path("/unitTest")
     @Produces({MediaType.APPLICATION_JSON})
     public AppResponse meetupAttendeeTestPage(@Context HttpHeaders headers) {
         try {
             AppLogger.info("Got an API call");
-            return new AppResponse("MeetupAttendee Test Page");
+            return new AppResponse("MeetupAttendee Unit Test Page");
         } catch (Exception e) {
-            throw handleException("GET /MeetupAttendee Test Page", e);
+            throw handleException("GET /MeetupAttendee Unit Test Page", e);
         }
     }
 
@@ -66,6 +66,7 @@ public class MeetupAttendeeHttpInterface extends HttpInterface {
         }
     }
 
+    // http://localhost:8080/api/meetupAttendee/1/1
     @GET
     @Path("/{idBuddyUser}/{idMeetup}")
     @Produces({MediaType.APPLICATION_JSON})
@@ -87,6 +88,87 @@ public class MeetupAttendeeHttpInterface extends HttpInterface {
         } catch (Exception e) {
             throw handleException("GET /meetupAttendees", e);
         }
+    }
+
+    // http://localhost:8080/api/meetupAttendee
+    @POST
+    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
+    public AppResponse postMeetup(Object request) {
+
+        try {
+            JSONObject json = null;
+            json = new JSONObject(ow.writeValueAsString(request));
+
+            System.out.println("Step 1");
+            MeetupAttendee newMeetupAttendee = new MeetupAttendee(
+                    json.getInt("idBuddyUser"),
+                    json.getInt("idMeetup")
+            );
+
+            System.out.println("Step 2");
+
+            if (json.optInt("MissingBuddy", -1) != -1)
+                newMeetupAttendee.setMissingBuddy(json.optInt("MissingBuddy", -1));
+            if (json.optInt("BuddyRating", -1) != -1)
+                newMeetupAttendee.setBuddyRating(json.optInt("BuddyRating", -1));
+            if (!json.optString("SuggestionToBuddy", "#").equals("#"))
+                newMeetupAttendee.setSuggestionToBuddy(json.optString("SuggestionToBuddy", "#"));
+
+            System.out.println("Step 3");
+
+            MeetupAttendeeManager.getInstance().insertToMeetupAttendee(newMeetupAttendee);
+            return new AppResponse("Insert Successful");
+
+        } catch (Exception e) {
+            throw handleException("POST users", e);
+        }
+    }
+
+    // http://localhost:8080/api/meetupAttendee/1/1
+    @PATCH
+    @Path("/{idBuddyUser}/{idMeetup}")
+    @Consumes({ MediaType.APPLICATION_JSON})
+    @Produces({ MediaType.APPLICATION_JSON})
+    public AppResponse patchMeetup(Object request, @PathParam("idBuddyUser") int idBuddyUser, @PathParam("idMeetup") int idMeetup){
+
+        JSONObject json = null;
+
+        try{
+            json = new JSONObject(ow.writeValueAsString(request));
+
+            System.out.println("Step 1");
+            MeetupAttendee newMeetupAttendee = new MeetupAttendee(
+                    idBuddyUser,
+                    idMeetup,
+                    json.getInt("MissingBuddy"),
+                    json.getInt("BuddyRating"),
+                    json.getString("SuggestionToBuddy")
+            );
+
+            System.out.println("Step 2");
+
+            MeetupAttendeeManager.getInstance().updateToMeetupAttendee(newMeetupAttendee);
+            return new AppResponse("Update Successful");
+        }catch (Exception e){
+            throw handleException("PATCH meetups/{meetupId}", e);
+        }
+    }
+
+    // http://localhost:8080/api/meetupAttendee/1/1
+    @DELETE
+    @Path("/{idBuddyUser}/{idMeetup}")
+    @Consumes({ MediaType.APPLICATION_JSON })
+    @Produces({ MediaType.APPLICATION_JSON })
+    public AppResponse deleteMeetup(@PathParam("idBuddyUser") int idBuddyUser, @PathParam("idMeetup") int idMeetup){
+
+        try{
+            MeetupAttendeeManager.getInstance().deleteMeetupAttendee(idBuddyUser, idMeetup);
+            return new AppResponse("Delete Successful");
+        }catch (Exception e){
+            throw handleException("DELETE meetups/{meetupId}", e);
+        }
+
     }
 
 }

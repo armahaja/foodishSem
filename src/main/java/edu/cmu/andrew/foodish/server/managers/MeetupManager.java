@@ -12,17 +12,17 @@ public class MeetupManager extends Manager {
     public static MeetupManager _self;
 
     protected Connection con;
-    private static String tableName = "Meetup";
+    private static final String tableName = "Meetup";
 
-    private static String Q_getMeetupList = "select * from ";
-    private static String Q_getMeetupById = "select * from Foodish.Meetup where idMeetup = ?";
-    private static String Q_getidChefUserFromMeetup = "select idChefUser from Foodish.Meetup where idMeetup = ?";
-    private static String Q_getLocationFromMeetup = "select Location from Foodish.Meetup where idMeetup = ?";
-    private static String Q_insertToMeetupLessParameters = "insert into Meetup(idDish, idChefUser, Location, Date, StartTime, MaxGuestsAllowed) values(?,?,?,?,?,?)";
-    private static String Q_insertToMeetup = "insert into Meetup(idDish, idChefUser, Location, Date, StartTime, Feedback_FoodQuality,Feedback_FoodQuantity,Feedback_FoodTaste,TotalFeedbackReceived,MeetupRating,MaxGuestsAllowed) values(?,?,?,?,?,?,?,?,?,?,?)";
-    private static String Q_updateToMeetupLessParameters = "update Meetup set idDish = ?, idChefUser = ?, Location = ?, Date = ?, StartTime = ?, MaxGuestsAllowed = ? where idMeetup = ?";
-    private static String Q_updateToMeetup = "update Meetup set idDish = ?, idChefUser = ?, Location = ?, Date = ?, StartTime = ?, Feedback_FoodQuality = ?, Feedback_FoodQuantity = ?, Feedback_FoodTaste = ?, TotalFeedbackReceived = ?, MeetupRating = ?, MaxGuestsAllowed = ? where idMeetup = ?";
-    private static String Q_deleteFromMeetup = "delete from Meetup where idMeetup = ?";
+    private static final String Q_getMeetupList = "select * from ";
+    private static final String Q_getMeetupById = "select * from Foodish.Meetup where idMeetup = ?";
+    private static final String Q_getidChefUserFromMeetup = "select idChefUser from Foodish.Meetup where idMeetup = ?";
+    private static final String Q_getLocationFromMeetup = "select Location from Foodish.Meetup where idMeetup = ?";
+    private static final String Q_insertToMeetupLessParameters = "insert into Meetup(idDish, idChefUser, Location, Date, StartTime, MaxGuestsAllowed) values(?,?,?,?,?,?)";
+    private static final String Q_insertToMeetup = "insert into Meetup(idDish, idChefUser, Location, Date, StartTime, Feedback_FoodQuality,Feedback_FoodQuantity,Feedback_FoodTaste,TotalFeedbackReceived,MeetupRating,MaxGuestsAllowed) values(?,?,?,?,?,?,?,?,?,?,?)";
+    private static final String Q_updateToMeetupLessParameters = "update Meetup set idDish = ?, idChefUser = ?, Location = ?, Date = ?, StartTime = ?, MaxGuestsAllowed = ? where idMeetup = ?";
+    private static final String Q_updateToMeetup = "update Meetup set idDish = ?, idChefUser = ?, Location = ?, Date = ?, StartTime = ?, Feedback_FoodQuality = ?, Feedback_FoodQuantity = ?, Feedback_FoodTaste = ?, TotalFeedbackReceived = ?, MeetupRating = ?, MaxGuestsAllowed = ? where idMeetup = ?";
+    private static final String Q_deleteFromMeetup = "delete from Meetup where idMeetup = ?";
 
     public MeetupManager() throws ClassNotFoundException, SQLException {
         this.con = MySQLPool.getInstance().getConnection();
@@ -106,7 +106,7 @@ public class MeetupManager extends Manager {
             return meetup;
 
         } catch(Exception e){
-            throw handleException("Get Meetup List", e);
+            throw handleException("Get Meetup By Id", e);
         }
     }
 
@@ -210,10 +210,12 @@ public class MeetupManager extends Manager {
         try {
             PreparedStatement statement = con.prepareStatement(Q_deleteFromMeetup);
             statement.setInt(1, meetupId);
-            statement.execute();
-            System.out.println("Delete Meetup executes successfully.");
+            if (statement.executeUpdate() == 1)
+                System.out.println("Delete Meetup executes successfully.");
+            else
+                throw new Exception("Delete Meetup false");
         }catch (Exception e){
-            throw handleException("Delete User", e);
+            throw handleException("Delete Meetup", e);
         }
     }
 

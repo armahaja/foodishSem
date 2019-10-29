@@ -35,14 +35,14 @@ public class MeetupHttpInterface extends HttpInterface {
     }
 
     @GET
-    @Path("/test")
+    @Path("/unitTest")
     @Produces({MediaType.APPLICATION_JSON})
     public AppResponse meetupTestPage(@Context HttpHeaders headers) {
         try {
             AppLogger.info("Got an API call");
-            return new AppResponse("Meetup Test Page");
+            return new AppResponse("Meetup Unit Test Page");
         } catch (Exception e) {
-            throw handleException("GET /Meetup Test Page", e);
+            throw handleException("GET /Meetup Unit Test Page", e);
         }
     }
 
@@ -72,7 +72,7 @@ public class MeetupHttpInterface extends HttpInterface {
         }
     }
 
-    // http://localhost:8080/api/meetup
+    // http://localhost:8080/api/meetup/1
     @GET
     @Path("/{meetupId}")
     @Produces({MediaType.APPLICATION_JSON})
@@ -97,10 +97,11 @@ public class MeetupHttpInterface extends HttpInterface {
         }
     }
 
+    // http://localhost:8080/api/meetup
     @POST
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
-    public AppResponse postUsers(Object request) {
+    public AppResponse postMeetup(Object request) {
 
         try {
             JSONObject json = null;
@@ -140,11 +141,12 @@ public class MeetupHttpInterface extends HttpInterface {
         }
     }
 
+    // http://localhost:8080/api/meetup/1
     @PATCH
     @Path("/{meetupId}")
     @Consumes({ MediaType.APPLICATION_JSON})
     @Produces({ MediaType.APPLICATION_JSON})
-    public AppResponse patchUsers(Object request, @PathParam("meetupId") int meetupId){
+    public AppResponse patchMeetup(Object request, @PathParam("meetupId") int meetupId){
 
         JSONObject json = null;
 
@@ -185,11 +187,12 @@ public class MeetupHttpInterface extends HttpInterface {
         }
     }
 
+    // http://localhost:8080/api/meetup/1
     @DELETE
     @Path("/{meetupId}")
     @Consumes({ MediaType.APPLICATION_JSON })
     @Produces({ MediaType.APPLICATION_JSON })
-    public AppResponse deleteMeetups(@PathParam("meetupId") int meetupId){
+    public AppResponse deleteMeetup(@PathParam("meetupId") int meetupId){
 
         try{
             MeetupManager.getInstance().deleteMeetup(meetupId);

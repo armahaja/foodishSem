@@ -2,7 +2,7 @@ package edu.cmu.andrew.foodish.server.models;
 
 public class Dish {
 
-    private int idDish;
+    private int idDish = -1;
     private int idUser;
     private String DishName;
     private String DishDescription;

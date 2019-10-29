@@ -2,7 +2,7 @@ package edu.cmu.andrew.foodish.server.models;
 
 public class User {
 
-    private int idUsers;
+    private int idUser = -1;
     private String FullName;
     private String Email;
     private String VerificationToken;
@@ -10,8 +10,8 @@ public class User {
     private int IsVerified;
     private String phone;
 
-    public User(int idUsers, String fullName, String email, String verificationToken, String password, int isVerified, String phone) {
-        this.idUsers = idUsers;
+    public User(int idUser, String fullName, String email, String verificationToken, String password, int isVerified, String phone) {
+        this.idUser = idUser;
         FullName = fullName;
         Email = email;
         VerificationToken = verificationToken;
@@ -20,8 +20,8 @@ public class User {
         this.phone = phone;
     }
 
-    public void setIdUsers(int idUsers) {
-        this.idUsers = idUsers;
+    public void setIdUsers(int idUser) {
+        this.idUser = idUser;
     }
 
     public void setFullName(String fullName) {
@@ -48,8 +48,8 @@ public class User {
         this.phone = phone;
     }
 
-    public int getIdUsers() {
-        return idUsers;
+    public int getIdUser() {
+        return idUser;
     }
 
     public String getFullName() {
